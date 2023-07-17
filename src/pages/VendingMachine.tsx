@@ -6,8 +6,8 @@ import { RootState } from '../hooks';
 
 
 export function VendingMachinePage() {  
-  const userLogin = useSelector((state: RootState) => state.userLogin)
-  if (!userLogin.name && !userLogin.lastName) {
+  const sessionId = useSelector((state: RootState) => state.userLogin)
+  if (!sessionId.sessionId) {
     return <Login />
   }
 

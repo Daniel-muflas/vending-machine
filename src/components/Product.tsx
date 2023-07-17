@@ -1,10 +1,13 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { ProductAPI } from '../api/api';
 
  
-export interface ProductProps extends ProductAPI {
+export interface ProductProps {
+  id: string;
+  title: string;
+  stock: number;
+  price: number;
   decrementStock: (id: string) => void;
   incrementValue: (value: number) => void;
 }

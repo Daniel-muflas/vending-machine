@@ -6,6 +6,7 @@ import { RootState } from '../hooks';
 
 export function LoginPage() {
   const userLogin = useSelector((state: RootState) => state.userLogin)
+  // TODO : store sessionID in coockies
   if (userLogin.name && userLogin.lastName) {
     return <Navigate to='/vending-machine' />
   }

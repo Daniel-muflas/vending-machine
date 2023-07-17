@@ -5,8 +5,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserState } from '../store';
 import { RootState } from '../hooks';
-import { api, UserLoginRequestAPI } from '../api/api';
+import { api } from '../api/api';
 import { useNavigate } from 'react-router-dom';
+import { iLogin, iLoginResponse } from '../api/interfaces';
 
   
 export const Login: FC = () => {
@@ -16,17 +17,14 @@ export const Login: FC = () => {
 
     const { handleSubmit, register } = useForm();
     // COMO MANTENER LA SESSION INICIDA ?
-    // react-session?
 
     const _onSubmit: SubmitHandler<any> = async (data) => {
-      if (userLogin.name && userLogin.lastName){
-        return navigate('/vending-machine')
-      }
-      
-      const validUser = await api.getUser({
-        name: data.name, lastName: data.lastName
-      } as UserLoginRequestAPI);
-      if (validUser) {
+      // If get session id 
+
+      const validUser = await api.login({
+        userName: data.userName, password: data.password
+      } as iLogin);
+      if (validUser.name && validUser.lastName) {
         dispatch(setUserState(validUser))  
         return navigate('/vending-machine')
       } else {
@@ -42,14 +40,14 @@ export const Login: FC = () => {
             label="User name"
             variant="outlined"
             required
-            inputProps={{ ...register("name", { required: "true" }) }}
+            inputProps={{ ...register("userName", { required: "true" }) }}
             margin="dense"
           />
           <TextField
-            label="User surname"
+            label="Password"
             variant="outlined"
             required
-            inputProps={{ ...register("lastName", { required: "true" }) }}
+            inputProps={{ ...register("password", { required: "true" }) }}
             margin="dense"
           />
           <Button

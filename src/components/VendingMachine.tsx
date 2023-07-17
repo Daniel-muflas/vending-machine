@@ -18,7 +18,10 @@ export const VendingMachine : React.FC = () => {
 					<ProductDetails />
 				</Grid>
 				<Grid item xs={4}>
-					<Wallet {...userState} />
+					<Wallet
+						name={userState.name}
+						lastName={userState.lastName}
+						totalValue={totalValueState.value}/>
 				</Grid>
 			</Grid>
 		</Card>

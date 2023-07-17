@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { Box, Card, Grid } from '@mui/material';
-import { api, ProductAPI } from '../api/api';
+import { api } from '../api/api';
 import { Product } from './Product';
-
+import { iSlot } from '../api/interfaces';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../hooks';
+import { setTotalValue } from '../store';
 
 
 export const  ProductDetails: React.FC = () => {
-  const [productDetails, setProducts] = useState<null | ProductAPI[]>(null);
-  const [totalValue, setTotalValue] = useState<number>(0.0);
+  const totalValue = useSelector((state: RootState) => state.totalValue)
+  const dispatch = useDispatch()
+  
+  const [productDetails, setProducts] = useState<null | iSlot[]>(null);
+  //const [totalValue, setTotalValue] = useState<number>(0.0);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<null | unknown>(null);
 
@@ -16,17 +22,20 @@ export const  ProductDetails: React.FC = () => {
     if (productDetails) {
       setProducts(productDetails.map(product => {
         if (product.id === id) {
-          if (product.stock === 0) {
+          if (product.quantity === 0) {
             return product;
           }
-          return { ...product, stock: product.stock - 1 };
+          return { ...product, quantity: product.quantity - 1 };
         }
         return product;
       }));
     }
   }
   function incrementValue(value: number) {
-      setTotalValue(totalValue+value);
+      // TODO: review how send to the BE, to store what user buy
+      console.log(value+totalValue.value)
+      dispatch(setTotalValue({value:totalValue.value+value}))     
+      //setTotalValue(totalValue+value);
   }
 
 
@@ -58,9 +67,9 @@ export const  ProductDetails: React.FC = () => {
               <Product
                 key={index}
                 id={product.id}
-                title={product.title}
-                stock={product.stock}
-                price={product.price}
+                title={product.product.name}
+                stock={product.quantity}
+                price={product.product.price}
                 decrementStock={decrementStock}
                 incrementValue={incrementValue}
               />
@@ -68,8 +77,8 @@ export const  ProductDetails: React.FC = () => {
           ))}
         </Grid>
       </Grid>
-      <Box sx={{ marginBottom: '16px' }}>Total value: {totalValue}€</Box>
+      <Box sx={{ marginBottom: '16px' }}>Total value: {totalValue.value}€</Box>
     </Card>
     
   );
-}
+};
