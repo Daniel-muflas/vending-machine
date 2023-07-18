@@ -40,7 +40,7 @@ export const api = {
     return Promise.resolve("") // ? MOCK : axios.post(BackendURLS.logout, data)
   },
   
-  postOrder: async (data: iOrder) => {
+  postOrder: async (data: iOrder[]) => {
     return Promise.resolve("") // ? MOCK : axios.post(BackendURLS.order, data)
   },
 
@@ -55,7 +55,7 @@ export const api = {
     return Promise.resolve("") // ? MOCK : axios.post(BackendURLS.wallet, data)
   },
   
-  getUser: async (params: any) => {
+  getUser: async (params: any) => { // deprecated
     return Promise.resolve(userMock) // ? MOCK: axios.get(BackendURLS.login) + `?${createQueryString(params)}`
   }, 
 }

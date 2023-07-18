@@ -21,6 +21,7 @@ export const Coins: React.FC<CoinsProp> = ({value, incrementBalance}) => {
             borderRadius: '1px',
             boxShadow: '0 12px 6px rgba(0, 0, 0, 0.1)',
             Width: '200px',
+            marginBottom: '10px',
           }}>
         <Button sx={{fontSize: 21, fontWeight: 800}}
             onClick={() => {incrementBalance(value)}}

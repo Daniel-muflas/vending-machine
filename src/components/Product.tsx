@@ -9,11 +9,12 @@ export interface ProductProps {
   stock: number;
   price: number;
   decrementStock: (id: string) => void;
-  incrementValue: (value: number) => void;
+  incrementValue: (id: string, value: number) => void;
+  addItem: (id: string) => void;
 }
  
 
-export const Product: React.FC<ProductProps> = ({ id, title, stock, price, decrementStock, incrementValue}: ProductProps, ) => {  
+export const Product: React.FC<ProductProps> = ({ id, title, stock, price, decrementStock, incrementValue, addItem}: ProductProps, ) => {  
   return (
 		<Box>
         <Box sx={{
@@ -46,7 +47,11 @@ export const Product: React.FC<ProductProps> = ({ id, title, stock, price, decre
         marginLeft: 'auto',
         marginRight: 'auto',  
       }}
-      onClick={() => {decrementStock(id); incrementValue(price)}}>Buy</Button>
+      onClick={() => {
+        decrementStock(id);
+        incrementValue(id, price);
+        addItem(id);
+      }}>Add</Button>
     </Box>
 	)
 };

@@ -36,7 +36,7 @@ export interface iLoginResponse {
 
 
 export interface iWalletRequest { // POST -> return 200
-    quantity: number; // in the query param
+    quantity: number;
 }
 
 

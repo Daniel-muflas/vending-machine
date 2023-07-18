@@ -6,6 +6,9 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Coins } from './Coin';
 import { api } from '../api/api';
+import { iOrder, iWalletRequest } from '../api/interfaces';
+import { useSelector } from 'react-redux';
+import { RootState } from '../hooks';
 
 
 
@@ -19,6 +22,7 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
     const coins: Array<number> = [
         0.10, 0.20, 0.50, 1, 2, 5
     ]
+    const allItems = useSelector((state: RootState) => state.allItems);
 
     const [totalBalance, setTotalBalance] = useState<number>(0.0);
     const [total, setTotalValue] = useState<number>(totalValue);
@@ -26,19 +30,31 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
     const [error, setError] = useState<null | unknown>(null);
 
     function incrementBalance(value: number) {
-      console.log(total)
       setTotalBalance(totalBalance+value);
+    };
+
+    function refoundMoney() {
+      setTotalBalance(0.0);
+    };
+
+    function buy(){
+      const data = allItems as iOrder[]
+      api.postOrder(data)
+    }
+
+    async function saveWallet() {
+      const data = {quantity: totalBalance} as iWalletRequest
+      await api.postWallet(data)
     };
 
     useEffect(() => {
       const fetchBalance = async () => {
         try {
           setLoading(true);
-          // get coockie user
+          // get cookie user
           const wallet = await api.getWallet()
             setTotalBalance(totalBalance || wallet.balance);
             setTotalValue(totalValue)
-            console.log(total)
         } catch (error) {
           setError(error);
         } finally {
@@ -47,7 +63,7 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
       };
   
       fetchBalance();
-    }, [totalBalance]);
+    }, [totalBalance, totalValue]);
   
     return (
     <Card sx={{ maxWidth: 500 ,marginTop: "100px", marginRight: "50px"}}>
@@ -79,22 +95,54 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
          > 
           <Typography color={totalBalance < totalValue ? 'error' : 'textPrimary'} variant="h6" gutterBottom>
             <b>Balance: {totalBalance}€</b>
+            <Button sx={{
+              flexWrap: 'wrap', 
+              display: 'inline-flex',
+              alignItems: 'center',
+              bgcolor: 'background.paper', 
+              boxShadow: 1,
+              borderRadius: 2,
+              Width: '200px',
+              marginLeft: '15px',
+              marginRight: 'auto',  
+            }}
+            onClick={() => {saveWallet()}}>Save money</Button>
           </Typography>
         </Box>
-
-        <Button sx={{
-          flexWrap: 'wrap', 
-          display: 'flex',
-          alignItems: 'center',
-          bgcolor: 'background.paper', 
-          boxShadow: 1,
-          borderRadius: 2,
-          Width: '200px',
-          marginBottom: "5px",
-          marginLeft: 'auto',
-          marginRight: 'auto',  
-        }}>Refound money</Button>
-      </Grid>
+        <Box sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 2,
+            marginLeft: 15
+          }}>
+            <Button sx={{
+              flexWrap: 'wrap', 
+              alignItems: 'center',
+              bgcolor: 'background.paper', 
+              boxShadow: 1,
+              borderRadius: 2,
+              width: '150px',
+              marginRight: 2,
+            }}
+            onClick={() => {buy()}}
+            disabled={totalBalance < totalValue} // Add the disabled attribute
+            >Buy</Button>
+          </Box>
+          <Button sx={{
+            flexWrap: 'wrap', 
+            display: 'flex',
+            alignItems: 'center',
+            bgcolor: 'background.paper', 
+            boxShadow: 1,
+            borderRadius: 2,
+            Width: '200px',
+            marginBottom: "5px",
+            marginLeft: 'auto',
+            marginRight: 'auto',  
+          }}
+          onClick={() => {refoundMoney()}}>Refound money</Button>
+        </Grid>
     </Card> 
 	  )
     // TODO: refound money -> reset to wallet balance

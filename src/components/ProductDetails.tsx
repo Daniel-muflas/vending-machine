@@ -6,15 +6,16 @@ import { Product } from './Product';
 import { iSlot } from '../api/interfaces';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../hooks';
-import { setTotalValue } from '../store';
+import { setTotalValue, iAllItems, iTotalValue, setAllItems} from '../store';
 
 
 export const  ProductDetails: React.FC = () => {
   const totalValue = useSelector((state: RootState) => state.totalValue)
+
   const dispatch = useDispatch()
   
   const [productDetails, setProducts] = useState<null | iSlot[]>(null);
-  //const [totalValue, setTotalValue] = useState<number>(0.0);
+
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<null | unknown>(null);
 
@@ -31,13 +32,25 @@ export const  ProductDetails: React.FC = () => {
       }));
     }
   }
-  function incrementValue(value: number) {
-      // TODO: review how send to the BE, to store what user buy
-      console.log(value+totalValue.value)
-      dispatch(setTotalValue({value:totalValue.value+value}))     
-      //setTotalValue(totalValue+value);
+
+  function checkStock(id: string){
+    if (!productDetails) {
+      return false;
+    }
+     return !(productDetails.some(product => product.id === id && product.quantity === 0));
   }
 
+  function incrementValue(id: string, value: number) {
+      if (checkStock(id)){
+        dispatch(setTotalValue({value: totalValue.value+value} as iTotalValue))
+      }
+  }
+
+  function addItem(id: string) {
+    if (checkStock(id)) {
+      dispatch(setAllItems({id, quantity: 1} as iAllItems))
+    }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -57,10 +70,21 @@ export const  ProductDetails: React.FC = () => {
 
   return (
     <Card sx={{ maxWidth: 500, marginTop: "100px", marginLeft: "50px"}}>
-      <Grid container sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+      <Grid container sx={{ p: 2, display: "flex", flexDirection: "column", alignItems: "center"}}>
         <Typography variant="h6" gutterBottom>
           <b>Products</b>
         </Typography>
+        <Box sx={{
+                flexWrap: 'wrap', 
+                display: 'inline-flex',
+                alignItems: "center",
+                bgcolor: 'background.paper', 
+                width: '200px',
+              }}>
+                <Typography variant="h5" gutterBottom>
+                  Total value: {totalValue.value}€
+                </Typography>    
+              </Box>
         <Grid item container spacing={2}>
           {productDetails?.map((product, index) => (
             <Grid key={index} item xs={4}>
@@ -72,12 +96,12 @@ export const  ProductDetails: React.FC = () => {
                 price={product.product.price}
                 decrementStock={decrementStock}
                 incrementValue={incrementValue}
+                addItem={addItem}
               />
             </Grid>
           ))}
         </Grid>
       </Grid>
-      <Box sx={{ marginBottom: '16px' }}>Total value: {totalValue.value}€</Box>
     </Card>
     
   );

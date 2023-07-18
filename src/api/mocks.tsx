@@ -32,9 +32,9 @@ export const productDataMock: iSlot[] = [
   ];
 
 export const userMock: iLoginResponse = {
-    name: "Daniel",
-    lastName: "de la Fuente",
-    sessionId: "cookiesaveplease"}
+    name: "Homer",
+    lastName: "Simpsons",
+    sessionId: "noTVnoBEER"}
 
 
 export const userWallet: iWallet = {balance: 10.0}
