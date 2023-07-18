@@ -29,9 +29,10 @@ export interface iLogin { // POST
 }
 
 export interface iLoginResponse {
-    name: string;
-    lastName: string;
-    sessionId: string; // -> response to save as cookie
+    token: string
+    first_name: string;
+    last_name: string;
+    email: string;
 }
 
 
@@ -47,4 +48,17 @@ export interface iOrder { // POST -> return 200
 
 export interface iLogOut { // POST - return 200 +remove cookie
     user_id: string;
+}
+
+export interface iRegister {
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+}
+
+export interface iRegisterResponse {
+  error: boolean
+  message: string
 }

@@ -1,13 +1,10 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { Login } from '../components/Login';
-import { RootState } from '../hooks';
 
 export function LoginPage() {
-  const userLogin = useSelector((state: RootState) => state.userLogin)
-  // TODO : store sessionID in coockies
-  if (userLogin.name && userLogin.lastName) {
+  const token = localStorage.getItem('token');
+  if (token) {
     return <Navigate to='/vending-machine' />
   }
 

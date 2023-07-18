@@ -4,11 +4,14 @@ import { iLoginResponse } from './api/interfaces';
 
 // MODULE 5
 // CREATE REDUX TO SHARE THE USER IN ALL COMPONENTS
+export interface iUserLoginState {
+  name: string;
+  lastName: string;
+}
 
-const initialState: iLoginResponse = {
+const initialState: iUserLoginState = {
     name: "",
     lastName: "",
-    sessionId: "",
 }
   
 
@@ -16,10 +19,9 @@ export const userLoginSlice = createSlice({
   name: 'userLogin',
   initialState,
   reducers: {
-        setUserState: (state, action: PayloadAction<iLoginResponse>) => {
+        setUserState: (state, action: PayloadAction<iUserLoginState>) => {
             state.name = action.payload.name
             state.lastName = action.payload.lastName
-            state.sessionId = action.payload.sessionId
         }
     }
 });

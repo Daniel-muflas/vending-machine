@@ -1,4 +1,4 @@
-import { iLoginResponse, iSlot, iWallet } from "./interfaces";
+import { iLoginResponse, iRegisterResponse, iSlot, iWallet } from "./interfaces";
 
 export const productDataMock: iSlot[] = [
     { 
@@ -32,9 +32,15 @@ export const productDataMock: iSlot[] = [
   ];
 
 export const userMock: iLoginResponse = {
-    name: "Homer",
-    lastName: "Simpsons",
-    sessionId: "noTVnoBEER"}
+    token: "ccb764bae4eb1c9749f82858fbbaf45893e7f598",
+    first_name: "Daniel",
+    last_name: "De La Fuente",
+    email: "danie3@abacum.io"
+  }
 
+export const registerMock: iRegisterResponse = {
+  error: false,
+  message: "Successfully register"
+}
 
 export const userWallet: iWallet = {balance: 10.0}

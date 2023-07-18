@@ -51,7 +51,6 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
       const fetchBalance = async () => {
         try {
           setLoading(true);
-          // get cookie user
           const wallet = await api.getWallet()
             setTotalBalance(totalBalance || wallet.balance);
             setTotalValue(totalValue)
@@ -145,7 +144,5 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
         </Grid>
     </Card> 
 	  )
-    // TODO: refound money -> reset to wallet balance
-    // TODO: create other button to buy all and check items total and balance
 };
 

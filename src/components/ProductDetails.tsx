@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
-import { Box, Card, Grid } from '@mui/material';
+import { Box, Button, Card, Grid } from '@mui/material';
 import { api } from '../api/api';
 import { Product } from './Product';
 import { iSlot } from '../api/interfaces';
@@ -40,6 +40,12 @@ export const  ProductDetails: React.FC = () => {
      return !(productDetails.some(product => product.id === id && product.quantity === 0));
   }
 
+  async function resetValue() {
+    dispatch(setTotalValue({value: 0.0} as iTotalValue))
+    const response = await api.getProducts();
+    setProducts(response);
+  }
+
   function incrementValue(id: string, value: number) {
       if (checkStock(id)){
         dispatch(setTotalValue({value: totalValue.value+value} as iTotalValue))
@@ -73,16 +79,28 @@ export const  ProductDetails: React.FC = () => {
       <Grid container sx={{ p: 2, display: "flex", flexDirection: "column", alignItems: "center"}}>
         <Typography variant="h6" gutterBottom>
           <b>Products</b>
+          <Button sx={{
+            flexWrap: 'wrap', 
+            display: 'inline-flex',
+            alignItems: 'center',
+            bgcolor: 'background.paper', 
+            boxShadow: 1,
+            borderRadius: 2,
+            width: '200px',
+            marginLeft: '150px',
+            marginRight: 'auto',  
+          }}
+          onClick={() => {resetValue();}}>Reset products</Button>
         </Typography>
         <Box sx={{
                 flexWrap: 'wrap', 
                 display: 'inline-flex',
                 alignItems: "center",
                 bgcolor: 'background.paper', 
-                width: '200px',
+                width: 'auto',
               }}>
                 <Typography variant="h5" gutterBottom>
-                  Total value: {totalValue.value}€
+                  <b>Total value: {totalValue.value}€</b>
                 </Typography>    
               </Box>
         <Grid item container spacing={2}>

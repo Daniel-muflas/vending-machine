@@ -3,44 +3,64 @@ import { FormGroup, TextField, Button } from '@mui/material';
 import React, { FC } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from 'react-redux';
-import { iUserLoginState, setUserState } from '../store';
+import { setUserState } from '../store';
 import { api } from '../api/api';
 import { useNavigate } from 'react-router-dom';
-import { iLogin, iLoginResponse } from '../api/interfaces';
+import { iLoginResponse, iRegister, iRegisterResponse } from '../api/interfaces';
 
-
-export const Login: FC = () => {
+  
+export const Register: FC = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
     const { handleSubmit, register } = useForm();
 
     const _onSubmit: SubmitHandler<any> = async (data) => {
-      const validUser: iLoginResponse = await api.login({
-        userName: data.userName, password: data.password
-      } as iLogin);
-      if (validUser.token) {
-        dispatch(setUserState({
-          name: validUser.first_name,
-          lastName: validUser.last_name,
-       } as iUserLoginState))
-  
-        localStorage.setItem('token', `Token ${validUser.token}`);
-        return navigate('/vending-machine')
+      const payload: iRegister = {
+        username: data.userName,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        password: data.password
+      };
+      const register: iRegisterResponse = await api.register(payload)
+      if (!register.error) {
+        return navigate('/')
       } else {
         console.log("ERROR MESSAGE")
-        return navigate('/')  
+        return navigate('/register')  
       }
     };
 
     return (
       <form onSubmit={handleSubmit(_onSubmit)}>
         <FormGroup sx={{ p: 3 }}>
-          <TextField
+        <TextField
             label="User name"
             variant="outlined"
             required
             inputProps={{ ...register("userName", { required: "true" }) }}
+            margin="dense"
+          />
+           <TextField
+            label="First name"
+            variant="outlined"
+            required
+            inputProps={{ ...register("firstName", { required: "true" }) }}
+            margin="dense"
+          />
+           <TextField
+            label="Last name"
+            variant="outlined"
+            required
+            inputProps={{ ...register("lastName", { required: "true" }) }}
+            margin="dense"
+          />
+           <TextField
+            label="Email"
+            variant="outlined"
+            required
+            inputProps={{ ...register("email", { required: "true" }) }}
             margin="dense"
           />
           <TextField
