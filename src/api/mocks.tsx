@@ -43,4 +43,8 @@ export const registerMock: iRegisterResponse = {
   message: "Successfully register"
 }
 
-export const userWallet: iWallet = {balance: 10.0}
+export const userWallet: iWallet = {
+  id: "walletid",
+  updated_at: Date.now().toString(),
+  balance: 10.0
+}

@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from 'react-redux';
 import { iUserLoginState, setUserState } from '../store';
-import { api } from '../api/api';
+import api from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import { iLogin, iLoginResponse } from '../api/interfaces';
 
@@ -16,16 +16,13 @@ export const Login: FC = () => {
     const { handleSubmit, register } = useForm();
 
     const _onSubmit: SubmitHandler<any> = async (data) => {
-      const validUser: iLoginResponse = await api.login({
-        userName: data.userName, password: data.password
+      const response = await api.login({
+        username: data.userName, password: data.password
       } as iLogin);
-      if (validUser.token) {
-        dispatch(setUserState({
-          name: validUser.first_name,
-          lastName: validUser.last_name,
-       } as iUserLoginState))
-  
-        localStorage.setItem('token', `Token ${validUser.token}`);
+      const login: iLoginResponse = response.data
+      if (login.token) {
+        dispatch(setUserState({name: login.first_name, lastName: login.last_name} as iUserLoginState))
+        localStorage.setItem('token', `${login.token}`);
         return navigate('/vending-machine')
       } else {
         console.log("ERROR MESSAGE")

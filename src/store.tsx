@@ -65,7 +65,10 @@ export const allItemsSlice = createSlice({
             // If the item does not exist, add it to the state array
             state.push(action.payload);
           }
-        }
+        },
+        resetAllItems: (state) => {
+          state = []
+        },
     }
 });
 
@@ -75,6 +78,7 @@ export const userLoginReducer = userLoginSlice.reducer
 export const { setTotalValue } = totalValueSlice.actions
 export const totalValueReducer = totalValueSlice.reducer
 export const { setAllItems } = allItemsSlice.actions
+export const { resetAllItems } = allItemsSlice.actions
 export const allItemsReducer = allItemsSlice.reducer
 
 export const store = configureStore({

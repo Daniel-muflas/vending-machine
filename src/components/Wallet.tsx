@@ -5,10 +5,11 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Coins } from './Coin';
-import { api } from '../api/api';
+import api from '../api/api';
 import { iOrder, iWalletRequest } from '../api/interfaces';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../hooks';
+import { resetAllItems } from '../store';
 
 
 
@@ -23,10 +24,14 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
         0.10, 0.20, 0.50, 1, 2, 5
     ]
     const allItems = useSelector((state: RootState) => state.allItems);
+    const dispatch = useDispatch()
 
     const [totalBalance, setTotalBalance] = useState<number>(0.0);
     const [total, setTotalValue] = useState<number>(totalValue);
     const [isLoading, setLoading] = useState(false);
+    const [disabled, setDisableBuy] = useState(false);
+    const [enoughMoney, setEnoughMoney] = useState(true);
+    const [walletId, setWalletId] = useState("");
     const [error, setError] = useState<null | unknown>(null);
 
     function incrementBalance(value: number) {
@@ -37,23 +42,33 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
       setTotalBalance(0.0);
     };
 
-    function buy(){
+    async function buy(){
       const data = allItems as iOrder[]
-      api.postOrder(data)
+      await api.postOrder(data)
+      dispatch(resetAllItems())
     }
 
     async function saveWallet() {
-      const data = {quantity: totalBalance} as iWalletRequest
+      const data = {id: walletId, amount: totalBalance} as iWalletRequest
+      setTotalBalance(totalBalance)
       await api.postWallet(data)
+      console.log(data)
+      if (totalBalance > totalValue) {
+        setEnoughMoney(true)
+        setDisableBuy(false)
+      }
     };
 
     useEffect(() => {
       const fetchBalance = async () => {
         try {
           setLoading(true);
-          const wallet = await api.getWallet()
-            setTotalBalance(totalBalance || wallet.balance);
-            setTotalValue(totalValue)
+          const response = await api.getWallet()
+          const wallet = response.data
+          setWalletId(wallet.id)
+          setTotalBalance(totalBalance || Number(wallet.balance));
+          setTotalValue(totalValue)
+          setDisableBuy(totalBalance < totalValue && enoughMoney)
         } catch (error) {
           setError(error);
         } finally {
@@ -64,6 +79,8 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
       fetchBalance();
     }, [totalBalance, totalValue]);
   
+    const buttonColor = totalBalance < totalValue && !enoughMoney ? 'gray' : 'darkseagreen';
+
     return (
     <Card sx={{ maxWidth: 500 ,marginTop: "100px", marginRight: "50px"}}>
         <Grid container sx={{ p: 2, display: "flex", flexDirection: "column" }}>
@@ -110,38 +127,35 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
         </Box>
         <Box sx={{
             display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems: 'auto',
+            justifyContent: 'auto',
             marginTop: 2,
-            marginLeft: 15
           }}>
             <Button sx={{
               flexWrap: 'wrap', 
               alignItems: 'center',
-              bgcolor: 'background.paper', 
+              bgcolor: buttonColor, 
               boxShadow: 1,
               borderRadius: 2,
               width: '150px',
               marginRight: 2,
             }}
             onClick={() => {buy()}}
-            disabled={totalBalance < totalValue} // Add the disabled attribute
-            >Buy</Button>
-          </Box>
-          <Button sx={{
-            flexWrap: 'wrap', 
-            display: 'flex',
-            alignItems: 'center',
-            bgcolor: 'background.paper', 
-            boxShadow: 1,
-            borderRadius: 2,
-            Width: '200px',
-            marginBottom: "5px",
-            marginLeft: 'auto',
-            marginRight: 'auto',  
-          }}
-          onClick={() => {refoundMoney()}}>Refound money</Button>
-        </Grid>
+            disabled={disabled && !enoughMoney}
+            ><b>Buy</b></Button>
+       
+            <Button sx={{
+              flexWrap: 'wrap', 
+              bgcolor: 'grey', 
+              boxShadow: 1,
+              borderRadius: 2,
+              width: 'auto',
+              marginRight: 2,
+            }}
+            onClick={() => {refoundMoney()}}
+            ><b>Refound money</b></Button>
+            </Box>
+          </Grid>
     </Card> 
 	  )
 };

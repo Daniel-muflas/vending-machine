@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { Box, Button, Card, Grid } from '@mui/material';
-import { api } from '../api/api';
+import api from '../api/api';
 import { Product } from './Product';
 import { iSlot } from '../api/interfaces';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../hooks';
-import { setTotalValue, iAllItems, iTotalValue, setAllItems} from '../store';
+import { setTotalValue, iAllItems, iTotalValue, setAllItems, resetAllItems} from '../store';
 
 
 export const  ProductDetails: React.FC = () => {
@@ -14,7 +14,7 @@ export const  ProductDetails: React.FC = () => {
 
   const dispatch = useDispatch()
   
-  const [productDetails, setProducts] = useState<null | iSlot[]>(null);
+  const [productDetails, setProducts] = useState<null | iSlot[]>([]);
 
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<null | unknown>(null);
@@ -41,9 +41,11 @@ export const  ProductDetails: React.FC = () => {
   }
 
   async function resetValue() {
+    dispatch(resetAllItems())
     dispatch(setTotalValue({value: 0.0} as iTotalValue))
     const response = await api.getProducts();
-    setProducts(response);
+    const products = response.data
+    setProducts(products);
   }
 
   function incrementValue(id: string, value: number) {
@@ -57,13 +59,13 @@ export const  ProductDetails: React.FC = () => {
       dispatch(setAllItems({id, quantity: 1} as iAllItems))
     }
   };
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const response = await api.getProducts();
-        setProducts(response);
+        const products = response.data
+        setProducts(products);
       } catch (error) {
         setError(error);
       } finally {
@@ -111,7 +113,7 @@ export const  ProductDetails: React.FC = () => {
                 id={product.id}
                 title={product.product.name}
                 stock={product.quantity}
-                price={product.product.price}
+                price={Number(product.product.price)}
                 decrementStock={decrementStock}
                 incrementValue={incrementValue}
                 addItem={addItem}

@@ -2,15 +2,12 @@
 import { FormGroup, TextField, Button } from '@mui/material';
 import React, { FC } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch } from 'react-redux';
-import { setUserState } from '../store';
-import { api } from '../api/api';
+import api  from '../api/api';
 import { useNavigate } from 'react-router-dom';
-import { iLoginResponse, iRegister, iRegisterResponse } from '../api/interfaces';
+import { iRegister, iRegisterResponse } from '../api/interfaces';
 
   
 export const Register: FC = () => {
-    const dispatch = useDispatch()
     const navigate = useNavigate();
 
     const { handleSubmit, register } = useForm();
@@ -24,12 +21,8 @@ export const Register: FC = () => {
         password: data.password
       };
       const register: iRegisterResponse = await api.register(payload)
-      if (!register.error) {
-        return navigate('/')
-      } else {
-        console.log("ERROR MESSAGE")
-        return navigate('/register')  
-      }
+      // TODO: check errors
+      return navigate('/')
     };
 
     return (

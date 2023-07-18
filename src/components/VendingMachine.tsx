@@ -8,9 +8,10 @@ import { Wallet } from './Wallet';
 
 
 export const VendingMachine : React.FC = () => {
-	// why can share the user through components ?
+	// how can share the user through components ?
 	const userState = useSelector((state: RootState) => state.userLogin)
 	const totalValueState = useSelector((state: RootState) => state.totalValue)
+
 	return (
 		<Card>
 			<Grid container>

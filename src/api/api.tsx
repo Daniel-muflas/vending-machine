@@ -1,18 +1,6 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { productDataMock, registerMock, userMock, userWallet } from './mocks';
 import { iLogOut, iLogin, iOrder, iRegister, iWallet, iWalletRequest } from './interfaces';
-
-const MOCK = true;
-
-
-const BackendURLS = {
-  login: `${process.env.REACT_APP_BACKEND_URL}/login`,
-  register: `${process.env.REACT_APP_BACKEND_URL}/register`,
-  logout: `${process.env.REACT_APP_BACKEND_URL}/logout`,
-  slots: `${process.env.REACT_APP_BACKEND_URL}/slots`,
-  wallet: `${process.env.REACT_APP_BACKEND_URL}/wallet`,
-  order: `${process.env.REACT_APP_BACKEND_URL}/order`,
-}
 
 
 function createQueryString(params: Record<string, string | number>): string {
@@ -28,35 +16,86 @@ function createQueryString(params: Record<string, string | number>): string {
   return searchParams.toString();
 }
 
+const BackendURLS = {
+  login: `${process.env.REACT_APP_BACKEND_URL}/auth/login/`,
+  register: `${process.env.REACT_APP_BACKEND_URL}/auth/register/`,
+  logout: `${process.env.REACT_APP_BACKEND_URL}/auth/logout/`,
+  slots: `${process.env.REACT_APP_BACKEND_URL}/slots/`,
+  wallet: `${process.env.REACT_APP_BACKEND_URL}/wallet/`,
+  order: `${process.env.REACT_APP_BACKEND_URL}/order/`,
+}
 
-export const api = {
+
+axios.interceptors.request.use(
+  config => {
+    config.headers['Authorization'] = `Token ${localStorage.getItem('token')}`;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
+
+const api_url = {
+  login: (data: iLogin) => {
+    return axios.post(BackendURLS.login, data)
+  },
+  register: (data: iRegister) => {
+    return axios.post(BackendURLS.register, data)
+  },
+  logout: (data: iLogOut) => {
+    return axios.post(BackendURLS.logout, data)
+  },
+  
+  postOrder: (data: iOrder[]) => {
+    return axios.post(BackendURLS.order, data)
+  },
+
+	getProducts: () => {
+    return axios.get(BackendURLS.slots)
+  },
+  
+  getWallet: () => {
+    return axios.get(BackendURLS.wallet)
+  },
+  postWallet: (data: iWalletRequest) => {
+    return axios.post(BackendURLS.wallet, data)
+  },
+}
+
+
+const urlMocked = {
   login: async (data: iLogin) => {
-    return Promise.resolve(userMock)// ? MOCK : axios.post(BackendURLS.login, data)
+    return Promise.resolve(userMock)
   },
   register: async (data: iRegister) => {
-    return Promise.resolve(registerMock)// ? MOCK : axios.post(BackendURLS.register, data)
+    return Promise.resolve(registerMock)
   },
   logout: async (data: iLogOut) => {
-    return Promise.resolve("") // ? MOCK : axios.post(BackendURLS.logout, data)
+    return Promise.resolve("") 
   },
   
   postOrder: async (data: iOrder[]) => {
-    return Promise.resolve("") // ? MOCK : axios.post(BackendURLS.order, data)
+    return Promise.resolve("") 
   },
 
 	getProducts: async () => {
-    return Promise.resolve(productDataMock) // ? MOCK : axios.get(BackendURLS.slots)
+    return Promise.resolve(productDataMock) 
   },
   
   getWallet: async () => {
-    return Promise.resolve(userWallet) // ? MOCK: axios.get(BackendURLS.wallet)
+    return Promise.resolve(userWallet) 
   },
   postWallet: async (data: iWalletRequest) => {
-    return Promise.resolve("") // ? MOCK : axios.post(BackendURLS.wallet, data)
+    return Promise.resolve("") 
   },
-  
-  getUser: async (params: any) => { // deprecated
-    return Promise.resolve(userMock) // ? MOCK: axios.get(BackendURLS.login) + `?${createQueryString(params)}`
-  }, 
 }
 
+const MOCK = false;
+let api: Record<string, any> = {};
+if (MOCK){
+  api = urlMocked
+} else {
+  api = api_url
+}
+export default api

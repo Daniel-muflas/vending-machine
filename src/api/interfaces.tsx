@@ -17,14 +17,16 @@ export interface iProduct {
 }
 
 export interface iWallet {  // GET -> response iWallet
+    id: string;
     balance: number;
+    updated_at: string
 }
 
 ////////////
 /// POST ///
 ////////////
 export interface iLogin { // POST 
-    userName: string;
+    username: string;
     password: string;
 }
 
@@ -37,7 +39,8 @@ export interface iLoginResponse {
 
 
 export interface iWalletRequest { // POST -> return 200
-    quantity: number;
+    id: string;
+    amount: number;
 }
 
 

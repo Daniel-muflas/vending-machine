@@ -6,7 +6,8 @@ export const WalletPage: FC = () => {
     const userBalance = {
         name: "test",
         lastName: "user",
-        totalValue: 0.0
+        totalValue: 0.0,
+        walletId: "1"
     } as WalletProps 
     return <Wallet {...userBalance} />
 }
