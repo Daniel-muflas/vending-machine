@@ -14,8 +14,8 @@ export const VendingMachine : React.FC = () => {
 
 	return (
 		<Card>
-			<Grid container>
-				<Grid item xs={8}>
+			<Grid container spacing={2} justifyContent={"center"}>
+				<Grid item xs={4}>
 					<ProductDetails />
 				</Grid>
 				<Grid item xs={4}>

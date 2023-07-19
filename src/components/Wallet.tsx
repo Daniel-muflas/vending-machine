@@ -10,6 +10,7 @@ import { iOrder, iWalletRequest } from '../api/interfaces';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../hooks';
 import { resetAllItems } from '../store';
+import { debug } from 'console';
 
 
 
@@ -27,6 +28,7 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
     const dispatch = useDispatch()
 
     const [totalBalance, setTotalBalance] = useState<number>(0.0);
+    const [amount, setAmountWallet] = useState<number>(0.0);
     const [total, setTotalValue] = useState<number>(totalValue);
     const [isLoading, setLoading] = useState(false);
     const [walletId, setWalletId] = useState("");
@@ -38,29 +40,39 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
 
     function incrementBalance(value: number) {
       setTotalBalance(totalBalance+value);
+      setAmountWallet(amount+value)
     };
 
     function refoundMoney() {
       setTotalBalance(0.0);
+      setAmountWallet(0.0)
     };
 
     async function buy(){
       const data = allItems as iOrder[]
-      if (data) {
+      debugger
+      if (data.length !== 0) {
         await api.postOrder(data)
       }
       dispatch(resetAllItems(null))
+      setTotalBalance(totalBalance - totalValue);
+      setTotalValue(0.0)
+      setAmountWallet(0.0)
     }
 
     async function saveWallet() {
-      const data = {id: walletId, amount: totalBalance} as iWalletRequest
+      debugger
+      const data = {id: walletId, amount: Math.round(amount)} as iWalletRequest
       setTotalBalance(totalBalance)
-      await api.postWallet(data)
+      if (amount > 0.0) {
+        await api.postWallet(data)
+      }
       if (totalBalance >= totalValue) {
         setEnoughMoney(true)
         setDisableBuy(false)
         setButtonBuyColor("darkseagreen")
       }
+      setAmountWallet(0.0)
     };
 
     useEffect(() => {
@@ -86,7 +98,7 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
       };
   
       fetchBalance();
-    }, [buttonBuyColor, disabled, enoughMoney, totalBalance, totalValue]);
+    }, [totalBalance,   ]);
   
     return (
     <Card sx={{ maxWidth: 500 ,marginTop: "100px", marginRight: "50px"}}>

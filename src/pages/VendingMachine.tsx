@@ -1,14 +1,10 @@
 import React from 'react';
-import { Login } from '../components/Login';
 import { VendingMachine } from "../components/VendingMachine";
+import { useAuth } from '../hooks/useAuth';
 
 
 export function VendingMachinePage() {  
-  const token = localStorage.getItem('token');
-  if (!token) {
-    return <Login />
-  }
-
+  useAuth(false)
   return <VendingMachine />
 }
 

@@ -33,6 +33,7 @@ export const Login: FC = () => {
     return (
       <form onSubmit={handleSubmit(_onSubmit)}>
         <FormGroup sx={{ p: 3 }}>
+          <label htmlFor="userName">User name</label>
           <TextField
             label="User name"
             variant="outlined"
@@ -40,6 +41,7 @@ export const Login: FC = () => {
             inputProps={{ ...register("userName", { required: "true" }) }}
             margin="dense"
           />
+          <label htmlFor="password">Password</label>
           <TextField
             label="Password"
             variant="outlined"
