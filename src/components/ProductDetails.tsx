@@ -41,7 +41,7 @@ export const  ProductDetails: React.FC = () => {
   }
 
   async function resetValue() {
-    dispatch(resetAllItems())
+    dispatch(resetAllItems(null))
     dispatch(setTotalValue({value: 0.0} as iTotalValue))
     const response = await api.getProducts();
     const products = response.data

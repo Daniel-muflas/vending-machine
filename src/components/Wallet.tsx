@@ -46,15 +46,16 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
 
     async function buy(){
       const data = allItems as iOrder[]
-      await api.postOrder(data)
-      dispatch(resetAllItems())
+      if (data) {
+        await api.postOrder(data)
+      }
+      dispatch(resetAllItems(null))
     }
 
     async function saveWallet() {
       const data = {id: walletId, amount: totalBalance} as iWalletRequest
       setTotalBalance(totalBalance)
       await api.postWallet(data)
-      console.log(data)
       if (totalBalance >= totalValue) {
         setEnoughMoney(true)
         setDisableBuy(false)

@@ -66,8 +66,9 @@ export const allItemsSlice = createSlice({
             state.push(action.payload);
           }
         },
-        resetAllItems: (state) => {
-          state = []
+        resetAllItems: (state,  action: PayloadAction<null>) => {
+          state = [];
+          return state;
         },
     }
 });
@@ -75,10 +76,11 @@ export const allItemsSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { setUserState } = userLoginSlice.actions
 export const userLoginReducer = userLoginSlice.reducer
+
 export const { setTotalValue } = totalValueSlice.actions
 export const totalValueReducer = totalValueSlice.reducer
-export const { setAllItems } = allItemsSlice.actions
-export const { resetAllItems } = allItemsSlice.actions
+
+export const { setAllItems , resetAllItems} = allItemsSlice.actions
 export const allItemsReducer = allItemsSlice.reducer
 
 export const store = configureStore({
