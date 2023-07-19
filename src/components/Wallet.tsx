@@ -29,10 +29,12 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
     const [totalBalance, setTotalBalance] = useState<number>(0.0);
     const [total, setTotalValue] = useState<number>(totalValue);
     const [isLoading, setLoading] = useState(false);
-    const [disabled, setDisableBuy] = useState(false);
-    const [enoughMoney, setEnoughMoney] = useState(true);
     const [walletId, setWalletId] = useState("");
     const [error, setError] = useState<null | unknown>(null);
+    // BUTTON BUY
+    const [disabled, setDisableBuy] = useState(false);
+    const [enoughMoney, setEnoughMoney] = useState(true);
+    const [buttonBuyColor, setButtonBuyColor] = useState<string>("darkseagreen");
 
     function incrementBalance(value: number) {
       setTotalBalance(totalBalance+value);
@@ -53,9 +55,10 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
       setTotalBalance(totalBalance)
       await api.postWallet(data)
       console.log(data)
-      if (totalBalance > totalValue) {
+      if (totalBalance >= totalValue) {
         setEnoughMoney(true)
         setDisableBuy(false)
+        setButtonBuyColor("darkseagreen")
       }
     };
 
@@ -66,9 +69,14 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
           const response = await api.getWallet()
           const wallet = response.data
           setWalletId(wallet.id)
-          setTotalBalance(totalBalance || Number(wallet.balance));
           setTotalValue(totalValue)
-          setDisableBuy(totalBalance < totalValue && enoughMoney)
+          setTotalBalance(totalBalance || Number(wallet.balance));
+         
+          if (totalBalance < totalValue) {
+            setEnoughMoney(false)
+            setDisableBuy(true)
+            setButtonBuyColor("gray")
+          } 
         } catch (error) {
           setError(error);
         } finally {
@@ -77,10 +85,8 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
       };
   
       fetchBalance();
-    }, [totalBalance, totalValue]);
+    }, [buttonBuyColor, disabled, enoughMoney, totalBalance, totalValue]);
   
-    const buttonColor = totalBalance < totalValue && !enoughMoney ? 'gray' : 'darkseagreen';
-
     return (
     <Card sx={{ maxWidth: 500 ,marginTop: "100px", marginRight: "50px"}}>
         <Grid container sx={{ p: 2, display: "flex", flexDirection: "column" }}>
@@ -134,7 +140,7 @@ export const Wallet: React.FC<WalletProps> = ({name, lastName, totalValue}) => {
             <Button sx={{
               flexWrap: 'wrap', 
               alignItems: 'center',
-              bgcolor: buttonColor, 
+              bgcolor: buttonBuyColor, 
               boxShadow: 1,
               borderRadius: 2,
               width: '150px',
